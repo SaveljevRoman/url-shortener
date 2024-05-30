@@ -1,0 +1,6 @@
+env: "local"
+storage_path: "/tmp"
+http_server:
+  address: "localhost:8080"
+  timeout: 3s
+  idle_timeout: 60s

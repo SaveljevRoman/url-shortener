@@ -1,9 +1,9 @@
 package main
 
 func main() {
-	// TODO: config
-	// TODO: logger
-	// TODO: storage
-	// TODO: router
-	// TODO: server
+	// TODO: config: cleanenv
+	// TODO: logger: slog
+	// TODO: storage: sqlite
+	// TODO: router: chi
+	// TODO: server: run server
 }
