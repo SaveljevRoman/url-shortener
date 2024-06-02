@@ -1,5 +1,8 @@
 env: "local"
-storage_path: "/tmp"
+storage:
+  address: "localhost:54321"
+  user: "postgres"
+  password: "root"
 http_server:
   address: "localhost:8080"
   timeout: 3s

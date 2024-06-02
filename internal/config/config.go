@@ -8,9 +8,15 @@ import (
 )
 
 type Config struct {
-	Env         string     `yaml:"env" env-default:"local"`
-	StoragePath string     `yaml:"storage_path" env-required:"true"`
-	HttpServer  HttpServer `yaml:"http_server"`
+	Env        string     `yaml:"env" env-default:"local"`
+	Storage    Storage    `yaml:"storage" env-required:"true"`
+	HttpServer HttpServer `yaml:"http_server" env-required:"true"`
+}
+
+type Storage struct {
+	Address  string `yaml:"address" env-default:"localhost:54321"`
+	User     string `yaml:"user" env-default:"postgres"`
+	Password string `yaml:"password" env-default:"root"`
 }
 
 type HttpServer struct {
