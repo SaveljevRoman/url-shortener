@@ -1,6 +1,8 @@
 env: "local"
 storage:
-  address: "localhost:54321"
+  host: "localhost"
+  port: "54321"
+  dbname: "postgres"
   user: "postgres"
   password: "root"
 http_server:

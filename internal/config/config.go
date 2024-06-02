@@ -14,7 +14,9 @@ type Config struct {
 }
 
 type Storage struct {
-	Address  string `yaml:"address" env-default:"localhost:54321"`
+	Host     string `yaml:"host" env-default:"localhost"`
+	Port     string `yaml:"port" env-default:"54321"`
+	DbName   string `yaml:"dbname" env-default:"postgres"`
 	User     string `yaml:"user" env-default:"postgres"`
 	Password string `yaml:"password" env-default:"root"`
 }

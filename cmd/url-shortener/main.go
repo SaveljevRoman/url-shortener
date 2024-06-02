@@ -2,9 +2,11 @@ package main
 
 import (
 	"fmt"
+	_ "github.com/lib/pq"
 	"log/slog"
 	"os"
 	"url-shortener/internal/config"
+	"url-shortener/internal/storage/postgres"
 )
 
 const (
@@ -21,7 +23,18 @@ func main() {
 	log.Info("starting url-shortener", slog.String("env", cfg.Env))
 	log.Debug("debug messages are enabled")
 
-	// TODO: storage: postgres
+	storage, err := postgres.New(
+		cfg.Storage.Host,
+		cfg.Storage.Port,
+		cfg.Storage.DbName,
+		cfg.Storage.User,
+		cfg.Storage.Password,
+	)
+	if err != nil {
+		log.Error("ошибка подключения к хранилищу: %w", err)
+	}
+	fmt.Println(storage)
+
 	// TODO: router: chi
 	// TODO: server: run server
 }
