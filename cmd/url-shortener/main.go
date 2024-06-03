@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log/slog"
 	"os"
 	"url-shortener/internal/config"
@@ -34,14 +33,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	id, err := storage.SaveURL("google.com", "google")
-	if err != nil {
-		log.Error("ошибка сохранения: %w", sl.Err(err))
-		os.Exit(1)
-	}
-
-	fmt.Println(id)
-
+	_ = storage
 	// TODO: router: chi
 	// TODO: server: run server
 }

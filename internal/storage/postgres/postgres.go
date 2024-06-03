@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	_ "github.com/lib/pq"
 )
@@ -74,4 +75,23 @@ func (s *Storage) SaveURL(urlToSave string, alias string) (int64, error) {
 	}
 
 	return id, nil
+}
+
+func (s *Storage) GetURL(alias string) (string, error) {
+	var res string
+	stmt, err := s.db.Prepare("SELECT url FROM url WHERE alias = $1")
+	if err != nil {
+		return res, fmt.Errorf("ошибка подготовки запроса получения url: %w", err)
+	}
+
+	err = stmt.QueryRow(alias).Scan(&res)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return res, fmt.Errorf("не нашел запись по алиасу %v: %w", alias, err)
+		}
+
+		return res, fmt.Errorf("не смог получить запись по алиасу %v: %w", alias, err)
+	}
+
+	return res, nil
 }
