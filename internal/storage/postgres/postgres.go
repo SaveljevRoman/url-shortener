@@ -21,29 +21,31 @@ func New(host, port, dbName, user, password string) (*Storage, error) {
 
 	tx, err := db.Begin()
 	if err != nil {
-		_ = fmt.Errorf("ошибка старта транзакции: %w", err)
+		return nil, fmt.Errorf("ошибка старта транзакции: %w", err)
 	}
 
 	_, err = tx.Exec(`CREATE TABLE IF NOT EXISTS url (id INTEGER PRIMARY KEY, alias TEXT NOT NULL UNIQUE, url TEXT NOT NULL);`)
 	if err != nil {
-		_ = tx.Rollback()
-		_ = fmt.Errorf("ошибка подготовки запроса создания таблицы url: %w", err)
+		if err = tx.Rollback(); err != nil {
+			return nil, fmt.Errorf("ошибка отката транзакции: %w", err)
+		}
+		return nil, fmt.Errorf("ошибка подготовки запроса создания таблицы url: %w", err)
 	}
 
 	_, err = tx.Exec(`CREATE INDEX IF NOT EXISTS idx_alias ON url(alias);`)
 	if err != nil {
-		_ = tx.Rollback()
-		_ = fmt.Errorf("ошибка создания индекса idx_alias: %w", err)
+		if err = tx.Rollback(); err != nil {
+			return nil, fmt.Errorf("ошибка отката транзакции: %w", err)
+		}
+		return nil, fmt.Errorf("ошибка создания индекса idx_alias: %w", err)
 	}
 
 	err = tx.Commit()
 	if err != nil {
-		_ = tx.Rollback()
-		_ = fmt.Errorf("ошибка коммита транзакции: %w", err)
-	}
-
-	if err != nil {
-		return nil, fmt.Errorf("ошибка подготовки запроса %w", err)
+		if err = tx.Rollback(); err != nil {
+			return nil, fmt.Errorf("ошибка отката транзакции: %w", err)
+		}
+		return nil, fmt.Errorf("ошибка коммита транзакции: %w", err)
 	}
 
 	return &Storage{db: db}, nil

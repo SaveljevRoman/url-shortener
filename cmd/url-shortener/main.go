@@ -6,6 +6,7 @@ import (
 	"log/slog"
 	"os"
 	"url-shortener/internal/config"
+	"url-shortener/internal/lib/logger/sl"
 	"url-shortener/internal/storage/postgres"
 )
 
@@ -17,7 +18,6 @@ const (
 
 func main() {
 	cfg := config.MustLoad()
-	fmt.Println(cfg)
 
 	log := setupLogger(cfg.Env)
 	log.Info("starting url-shortener", slog.String("env", cfg.Env))
@@ -31,7 +31,8 @@ func main() {
 		cfg.Storage.Password,
 	)
 	if err != nil {
-		log.Error("ошибка подключения к хранилищу: %w", err)
+		log.Error("ошибка подключения к хранилищу: %w", sl.Err(err))
+		os.Exit(1)
 	}
 	fmt.Println(storage)
 
