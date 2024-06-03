@@ -95,3 +95,6 @@ func (s *Storage) GetURL(alias string) (string, error) {
 
 	return res, nil
 }
+
+// todo реализовать
+//func (s *Storage) DeleteURL(alias string) error {}
