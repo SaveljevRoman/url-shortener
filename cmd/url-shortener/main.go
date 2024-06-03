@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	_ "github.com/lib/pq"
 	"log/slog"
 	"os"
 	"url-shortener/internal/config"
@@ -34,7 +33,14 @@ func main() {
 		log.Error("ошибка подключения к хранилищу: %w", sl.Err(err))
 		os.Exit(1)
 	}
-	fmt.Println(storage)
+
+	id, err := storage.SaveURL("google.com", "google")
+	if err != nil {
+		log.Error("ошибка сохранения: %w", sl.Err(err))
+		os.Exit(1)
+	}
+
+	fmt.Println(id)
 
 	// TODO: router: chi
 	// TODO: server: run server
