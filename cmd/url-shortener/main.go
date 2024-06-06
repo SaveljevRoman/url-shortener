@@ -7,7 +7,7 @@ import (
 	"os"
 	"url-shortener/internal/config"
 	httpLogger "url-shortener/internal/http-server/middleware/logger"
-	"url-shortener/internal/lib/handlers/slogpretty"
+	"url-shortener/internal/lib/logger/handlers/slogpretty"
 	"url-shortener/internal/lib/logger/sl"
 	"url-shortener/internal/storage/postgres"
 )
@@ -32,7 +32,7 @@ func main() {
 		cfg.Storage.User,
 		cfg.Storage.Password,
 	)
-	_ = storage
+	_ = storage // todo delete
 	if err != nil {
 		log.Error("ошибка подключения к хранилищу: %w", sl.Err(err))
 		os.Exit(1)
