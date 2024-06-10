@@ -8,7 +8,10 @@ import (
 	"net/http"
 	"url-shortener/internal/lib/api/response"
 	"url-shortener/internal/lib/logger/sl"
+	"url-shortener/internal/lib/random"
 )
+
+const aliasLength = 3
 
 type URLSaver interface {
 	SaveURL(urlToSave, alias string) (int64, error)
@@ -40,7 +43,7 @@ func New(log *slog.Logger, saver URLSaver) http.HandlerFunc {
 		}
 
 		log.Info("декодированый request", slog.Any("request", req))
-		if err := validator.New().Struct(req); err != nil {
+		if err := validator.New().Struct(req); err != nil { // todo лишние ошибки
 			log.Error("invalid request", sl.Err(err))
 			render.JSON(w, r, response.Error("невалидный запрос"))
 			if validateErr, ok := err.(validator.ValidationErrors); ok {
@@ -48,6 +51,23 @@ func New(log *slog.Logger, saver URLSaver) http.HandlerFunc {
 			}
 		}
 
-		// todo остановился здесь
+		alias := req.Alias
+		if alias == "" {
+			alias = random.NewRandomString(aliasLength)
+		}
+
+		id, err := saver.SaveURL(req.URL, alias)
+		if err != nil {
+			log.Error(err.Error(), slog.String("url", req.URL))
+			render.JSON(w, r, response.Error("ошибка сохранения url"))
+			return
+		}
+
+		log.Info("url сохранен", slog.Int64("id", id))
+
+		render.JSON(w, r, Response{
+			Response: response.OK(),
+			Alias:    alias,
+		})
 	}
 }

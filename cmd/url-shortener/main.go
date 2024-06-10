@@ -4,8 +4,10 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"log/slog"
+	"net/http"
 	"os"
 	"url-shortener/internal/config"
+	"url-shortener/internal/http-server/handler/url/save"
 	httpLogger "url-shortener/internal/http-server/middleware/logger"
 	"url-shortener/internal/lib/logger/handlers/slogpretty"
 	"url-shortener/internal/lib/logger/sl"
@@ -45,7 +47,22 @@ func main() {
 	router.Use(middleware.Recoverer)
 	router.Use(middleware.URLFormat)
 
-	// TODO: server: run server
+	router.Post("/url", save.New(log, storage))
+
+	log.Info("запуск сервера", slog.String("address", cfg.HttpServer.Addr))
+
+	srv := &http.Server{
+		Addr:         cfg.HttpServer.Addr,
+		Handler:      router,
+		ReadTimeout:  cfg.HttpServer.Timeout,
+		WriteTimeout: cfg.HttpServer.Timeout,
+		IdleTimeout:  cfg.HttpServer.IdleTimeout,
+	}
+
+	if err := srv.ListenAndServe(); err != nil {
+		log.Error("ошибка запуска сервера")
+	}
+	log.Error("сервер остановлен")
 }
 
 func setupLogger(env string) *slog.Logger {
